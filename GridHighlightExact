@@ -1,0 +1,93 @@
+import java.util.*;
+
+public class GridHighlightExact {
+
+    static final int[] EVEN_VALUES = {2,4,6,8,10,12,14,16,18,20};
+    static Random random = new Random();
+
+    static int randomEven() {
+        return EVEN_VALUES[random.nextInt(EVEN_VALUES.length)];
+    }
+
+    static String separator(int n) {
+        StringBuilder sb = new StringBuilder("   ");
+        for (int i = 0; i < n; i++) sb.append("+----");
+        sb.append("+");
+        return sb.toString();
+    }
+
+    static void printHeader(int n) {
+        System.out.print("    ");
+        for (int i = 0; i < n; i++) System.out.printf(" %02d ", i);
+        System.out.println();
+    }
+
+    static String cell(int value, boolean highlight) {
+        if (highlight) return String.format("[%2d]", value);
+        return String.format(" %2d ", value);
+    }
+
+    static void printGrid(int[][] grid) {
+        int n = grid.length;
+        printHeader(n);
+        System.out.println(separator(n));
+        for (int r = 0; r < n; r++) {
+            System.out.printf("%02d ", r);
+            for (int c = 0; c < n; c++) System.out.print("|" + cell(grid[r][c], false));
+            System.out.println("|");
+            System.out.println(separator(n));
+        }
+    }
+
+    static int printHighlighted(int[][] grid, int target) {
+        int n = grid.length;
+        int count = 0;
+        printHeader(n);
+        System.out.println(separator(n));
+
+        for (int r = 0; r < n; r++) {
+            System.out.printf("%02d ", r);
+            for (int c = 0; c < n; c++) {
+                boolean hit = grid[r][c] == target;
+                if (hit) count++;
+                System.out.print("|" + cell(grid[r][c], hit));
+            }
+            System.out.println("|");
+            System.out.println(separator(n));
+        }
+        return count;
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        int n = 0;
+        while (n <= 0) {
+            System.out.print("Enter array size (for NXN array): ");
+            try { n = Integer.parseInt(sc.nextLine().trim()); }
+            catch (Exception e) { n = 0; }
+        }
+
+        int[][] grid = new int[n][n];
+        for (int r = 0; r < n; r++)
+            for (int c = 0; c < n; c++)
+                grid[r][c] = randomEven();
+
+        System.out.println("\nGenerated 2D array:");
+        printGrid(grid);
+
+        int target = -1;
+        while (true) {
+            System.out.print("\nEnter a number to highlight (even number 2-20): ");
+            try {
+                target = Integer.parseInt(sc.nextLine().trim());
+                if (target >= 2 && target <= 20 && target % 2 == 0) break;
+            } catch (Exception e) {}
+        }
+
+        System.out.println("\nArray with " + target + " highlighted:");
+        int count = printHighlighted(grid, target);
+
+        System.out.println("\nNumber " + target + " appeared " + count + " time(s).");
+    }
+}
